@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products | Metal Resident</title>
+  <!-- 引入外部资源 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- 配置Tailwind主题 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1a1a1a',      // 主色调：深灰（专业、沉稳）
+            secondary: '#f5f5f5',    // 辅助色：浅灰（背景）
+            accent: '#e0e0e0',       // 强调色：淡灰（边框、分隔）
+            highlight: '#3b82f6'     // 高亮色：蓝色（按钮、链接）
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .color-swatch {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+      .color-swatch:hover {
+        transform: scale(1.1);
+      }
+      .color-swatch.selected {
+        box-shadow: 0 0 0 2px white, 0 0 0 4px #3b82f6;
+      }
+      .size-option {
+        border: 1px solid #e0e0e0;
+        padding: 4px 10px;
+        cursor: default;
+        color: #666;
+      }
+      .filter-active {
+        color: #3b82f6;
+        border-bottom: 2px solid #3b82f6;
+      }
+      .product-card {
+        transition: all 0.3s ease;
+      }
+      .product-card.hidden {
+        display: none;
+        opacity: 0;
+        transform: scale(0.95);
+      }
+    }
+  </style>
+  <!-- 引入字体 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-inter bg-white text-primary antialiased">
+  <!-- 导航栏 -->
+  <header class="fixed w-full top-0 z-50 transition-all duration-300" id="navbar">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <!-- 品牌Logo -->
+        <div class="logo">
+          <img src="https://github.com/samsun1202-arch/metal-resident-website/blob/main/MR-Logo.jpg?raw=true" alt="Metal Resident Logo" class="w-30 h-10 object-cover object-center">
+        </div>
+        
+        <!-- 桌面端导航 -->
+        <nav class="hidden md:flex space-x-8">
+          <a href="index.html" class="text-sm uppercase tracking-widest hover:text-highlight transition-colors">Home</a>
+          <a href="products.html" class="text-sm uppercase tracking-widest text-highlight transition-colors">Products</a>
+          <a href="index.html#services" class="text-sm uppercase tracking-widest hover:text-highlight transition-colors">Distributors</a>
+          <a href="index.html#about" class="text-sm uppercase tracking-widest hover:text-highlight transition-colors">About</a>
+          <a href="index.html#contact" class="text-sm uppercase tracking-widest hover:text-highlight transition-colors">Contact</a>
+        </nav>
+        
+        <!-- 导航工具 -->
+        <div class="flex items-center space-x-6">
+          <a href="#" class="hover:text-highlight transition-colors">
+            <i class="fa fa-search text-lg"></i>
+          </a>
+          <a href="#" class="hover:text-highlight transition-colors">
+            <i class="fa fa-user text-lg"></i>
+          </a>
+          <a href="#" class="hover:text-highlight transition-colors relative">
+            <i class="fa fa-shopping-bag text-lg"></i>
+            <span class="absolute -top-2 -right-2 bg-highlight text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">3</span>
+          </a>
+          
+          <!-- 移动端菜单按钮 -->
+          <button class="md:hidden text-xl" id="menu-toggle">
+            <i class="fa fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 移动端菜单 -->
+    <div class="md:hidden hidden bg-white border-t border-accent/30" id="mobile-menu">
+      <div class="container mx-auto px-4 py-4 space-y-4">
+        <a href="index.html" class="block text-sm uppercase tracking-widest hover:text-highlight transition-colors">Home</a>
+        <a href="products.html" class="block text-sm uppercase tracking-widest text-highlight transition-colors">Products</a>
+        <a href="index.html#distributors" class="block text-sm uppercase tracking-widest hover:text-highlight transition-colors">Distributors</a>
+        <a href="index.html#about" class="block text-sm uppercase tracking-widest hover:text-highlight transition-colors">About</a>
+        <a href="index.html#contact" class="block text-sm uppercase tracking-widest hover:text-highlight transition-colors">Contact</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="pt-32 pb-20">
+    <!-- 页面标题和筛选器 -->
+    <section class="mb-16">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
+          <div>
+            <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-light mb-2">Our Products</h1>
+            <p class="text-primary/70" id="product-count">Showing 8 products</p>
+          </div>
+        </div>
+        
+        <!-- 产品类别导航 - 筛选功能 -->
+        <div class="border-y border-accent/30 py-4 overflow-x-auto">
+          <div class="flex space-x-6 min-w-max">
+            <button class="whitespace-nowrap pb-1 filter-btn filter-active" data-filter="all">All Products</button>
+            <button class="whitespace-nowrap text-primary/70 hover:text-primary transition-colors pb-1 filter-btn" data-filter="clothes">Clothes</button>
+            <button class="whitespace-nowrap text-primary/70 hover:text-primary transition-colors pb-1 filter-btn" data-filter="accessories">Accessories</button>
+            <button class="whitespace-nowrap text-primary/70 hover:text-primary transition-colors pb-1 filter-btn" data-filter="brompton">Brompton Collection</button>
+            <button class="whitespace-nowrap text-primary/70 hover:text-primary transition-colors pb-1 filter-btn" data-filter="new">New Arrivals</button>
+            <button class="whitespace-nowrap text-primary/70 hover:text-primary transition-colors pb-1 filter-btn" data-filter="sale">On Sale</button>
+          </div>
+        </div>
+      </div>
+    </section> 
+    
+    <!-- 商品列表 -->
+    <section>
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="products-grid">
+          <!-- 商品1 - 序号1 -->
+          <div class="group product-card" data-id="1" data-category="clothes">
+            <div class="relative overflow-hidden mb-4">
+              
+              <!-- 存储不同颜色的图片路径数据 -->
+              <div class="product-images hidden">
+                <img src="https://picsum.photos/seed/jacket1/600/800" data-color="black" alt="Urban Cycling Jacket - Black">
+                <img src="https://picsum.photos/seed/jacket2/600/800" data-color="gray" alt="Urban Cycling Jacket - Gray">
+                <img src="https://picsum.photos/seed/jacket3/600/800" data-color="navy" alt="Urban Cycling Jacket - Navy">
+              </div>
+              
+              <!-- 主显示图片 -->
+              <img src="https://picsum.photos/seed/jacket1/600/800" alt="Urban Cycling Jacket - Black" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
+              
+              <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="hover:text-highlight transition-colors">
+                  <i class="fa fa-heart-o"></i>
+                </button>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+                  Quick View
+                </button>
+              </div>
+            </div>
+            <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Urban Cycling Jacket</h3>
+            <p class="text-primary/70 text-sm mb-2">$189.00</p>
+            
+            <!-- 颜色选择 -->
+            <div class="mb-2">
+              <p class="text-xs text-primary/60 mb-1">Colors:</p>
+              <div class="flex space-x-2">
+                <div class="color-swatch bg-black selected" data-color="black" title="Black"></div>
+                <div class="color-swatch bg-gray-500" data-color="gray" title="Gray"></div>
+                <div class="color-swatch bg-blue-700" data-color="navy" title="Navy"></div>
+              </div>
+            </div>
+            
+            <!-- 尺码展示（不可选择） -->
+            <div>
+              <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
+              <div class="flex flex-wrap gap-2">
+                <div class="size-option">XS</div>
+                <div class="size-option">S</div>
+                <div class="size-option">M</div>
+                <div class="size-option">L</div>
+                <div class="size-option">XL</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 商品2 - 序号2 -->
+          <div class="group product-card" data-id="2" data-category="accessories new">
+            <div class="relative overflow-hidden mb-4">
+              
+              <div class="product-images hidden">
+                <img src="https://picsum.photos/seed/bag1/600/800" data-color="black" alt="Commuter Backpack - Black">
+                <img src="https://picsum.photos/seed/bag2/600/800" data-color="olive" alt="Commuter Backpack - Olive">
+              </div>
+              
+              <img src="https://picsum.photos/seed/bag1/600/800" alt="Commuter Backpack - Black" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
+              
+              <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="hover:text-highlight transition-colors">
+                  <i class="fa fa-heart-o"></i>
+                </button>
+              </div>
+              <div class="absolute top-3 left-3 bg-highlight text-white text-xs px-3 py-1 rounded-full">
+                New
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+                  Quick View
+                </button>
+              </div>
+            </div>
+            <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Commuter Backpack</h3>
+            <p class="text-primary/70 text-sm mb-2">$129.00</p>
+            
+            <!-- 颜色选择 -->
+            <div class="mb-2">
+              <p class="text-xs text-primary/60 mb-1">Colors:</p>
+              <div class="flex space-x-2">
+                <div class="color-swatch bg-black selected" data-color="black" title="Black"></div>
+                <div class="color-swatch bg-olive-700" data-color="olive" title="Olive"></div>
+              </div>
+            </div>
+            
+            <!-- 尺码展示（不可选择） -->
+            <div>
+              <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
+              <div class="flex flex-wrap gap-2">
+                <div class="size-option">One Size</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 商品3 - 序号3 -->
+          <div class="group product-card" data-id="3" data-category="clothes">
+            <div class="relative overflow-hidden mb-4">
+              
+              <div class="product-images hidden">
+                <img src="https://picsum.photos/seed/shirt1/600/800" data-color="blue" alt="Technical Cycling Shirt - Blue">
+                <img src="https://picsum.photos/seed/shirt2/600/800" data-color="light-gray" alt="Technical Cycling Shirt - Light Gray">
+                <img src="https://picsum.photos/seed/shirt3/600/800" data-color="forest" alt="Technical Cycling Shirt - Forest Green">
+              </div>
+              
+              <img src="https://picsum.photos/seed/shirt3/600/800" alt="Technical Cycling Shirt - Forest Green" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
+              
+              <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="hover:text-highlight transition-colors">
+                  <i class="fa fa-heart-o"></i>
+                </button>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+                  Quick View
+                </button>
+              </div>
+            </div>
+            <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Technical Cycling Shirt</h3>
+            <p class="text-primary/70 text-sm mb-2">$89.00</p>
+            
+            <!-- 颜色选择 -->
+            <div class="mb-2">
+              <p class="text-xs text-primary/60 mb-1">Colors:</p>
+              <div class="flex space-x-2">
+                <div class="color-swatch bg-blue-500" data-color="blue" title="Blue"></div>
+                <div class="color-swatch bg-gray-300" data-color="light-gray" title="Light Gray"></div>
+                <div class="color-swatch bg-green-700 selected" data-color="forest" title="Forest Green"></div>
+              </div>
+            </div>
+            
+            <!-- 尺码展示（不可选择） -->
+            <div>
+              <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
+              <div class="flex flex-wrap gap-2">
+                <div class="size-option">XS</div>
+                <div class="size-option">S</div>
+                <div class="size-option">M</div>
+                <div class="size-option">L</div>
+                <div class="size-option">XL</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 商品4 - 序号4 -->
+          <div class="group product-card" data-id="4" data-category="clothes">
+            <div class="relative overflow-hidden mb-4">
+              
+              <div class="product-images hidden">
+                <img src="https://picsum.photos/seed/pants1/600/800" data-color="black" alt="Urban Cycling Pants - Black">
+                <img src="https://picsum.photos/seed/pants2/600/800" data-color="dark-gray" alt="Urban Cycling Pants - Dark Gray">
+              </div>
+              
+              <img src="https://picsum.photos/seed/pants1/600/800" alt="Urban Cycling Pants - Black" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
+              
+              <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="hover:text-highlight transition-colors">
+                  <i class="fa fa-heart-o"></i>
+                </button>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+                  Quick View
+                </button>
+              </div>
+            </div>
+            <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Urban Cycling Pants</h3>
+            <p class="text-primary/70 text-sm mb-2">$119.00</p>
+            
+            <!-- 颜色选择 -->
+            <div class="mb-2">
+              <p class="text-xs text-primary/60 mb-1">Colors:</p>
+              <div class="flex space-x-2">
+                <div class="color-swatch bg-black selected" data-color="black" title="Black"></div>
+                <div class="color-swatch bg-gray-700" data-color="dark-gray" title="Dark Gray"></div>
+              </div>
+            </div>
+            
+            <!-- 尺码展示（不可选择） -->
+            <div>
+              <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
+              <div class="flex flex-wrap gap-2">
+                <div class="size-option">S</div>
+                <div class="size-option">M</div>
+                <div class="size-option">L</div>
+                <div class="size-option">XL</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 商品5 - 序号5 -->
+          <div class="group product-card" data-id="5" data-category="accessories brompton limited">
+            <div class="relative overflow-hidden mb-4">
+              
+              <div class="product-images hidden">
+                <img src="https://picsum.photos/seed/brompton1/600/800" data-color="red" alt="Brompton Handlebar Bag - Red">
+                <img src="https://picsum.photos/seed/brompton2/600/800" data-color="black" alt="Brompton Handlebar Bag - Black">
+                <img src="https://picsum.photos/seed/brompton3/600/800" data-color="yellow" alt="Brompton Handlebar Bag - Yellow">
+              </div>
+              
+              <img src="https://picsum.photos/seed/brompton2/600/800" alt="Brompton Handlebar Bag - Black" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
+              
+              <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="hover:text-highlight transition-colors">
+                  <i class="fa fa-heart-o"></i>
+                </button>
+              </div>
+              <div class="absolute top-3 left-3 bg-highlight text-white text-xs px-3 py-1 rounded-full">
+                Limited
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+                  Quick View
+                </button>
+              </div>
+            </div>
+            <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Brompton Handlebar Bag</h3>
+            <p class="text-primary/70 text-sm mb-2">$159.00</p>
+            
+            <!-- 颜色选择 -->
+            <div class="mb-2">
+              <p class="text-xs text-primary/60 mb-1">Colors:</p>
+              <div class="flex space-x-2">
+                <div class="color-swatch bg-red-600" data-color="red" title="Red"></div>
+                <div class="color-swatch bg-black selected" data-color="black" title="Black"></div>
+                <div class="color-swatch bg-yellow-600" data-color="yellow" title="Yellow"></div>
+              </div>
+            </div>
+            
+            <!-- 尺码展示（不可选择） -->
+            <div>
+              <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
+              <div class="flex flex-wrap gap-2">
+                <div class="size-option">One Size</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 商品6 - 序号6 -->
+          <div class="group product-card" data-id="6" data-category="accessories new">
+            <div class="relative overflow-hidden mb-4">
+              
+              <div class="product-images hidden">
+                <img src="https://picsum.photos/seed/cap1/600/800" data-color="navy" alt="Cycling Cap - Navy">
+                <img src="https://picsum.photos/seed/cap2/600/800" data-color="green" alt="Cycling Cap - Green">
+                <img src="https://picsum.photos/seed/cap3/600/800" data-color="off-white" alt="Cycling Cap - Off White">
+                <img src="https://picsum.photos/seed/cap4/600/800" data-color="red" alt="Cycling Cap - Red">
+              </div>
+              
+              <img src="https://picsum.photos/seed/cap2/600/800" alt="Cycling Cap - Green" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
+              
+              <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="hover:text-highlight transition-colors">
+                  <i class="fa fa-heart-o"></i>
+                </button>
+              </div>
+              <div class="absolute top-3 left-3 bg-highlight text-white text-xs px-3 py-1 rounded-full">
+                New
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+                  Quick View
+                </button>
+              </div>
+            </div>
+            <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Cycling Cap</h3>
+            <p class="text-primary/70 text-sm mb-2">$35.00</p>
+            
+            <!-- 颜色选择 -->
+            <div class="mb-2">
+              <p class="text-xs text-primary/60 mb-1">Colors:</p>
+              <div class="flex space-x-2">
+                <div class="color-swatch bg-blue-900" data-color="navy" title="Navy"></div>
+                <div class="color-swatch bg-green-800 selected" data-color="green" title="Green"></div>
+                <div class="color-swatch bg-gray-200" data-color="off-white" title="Off White"></div>
+                <div class="color-swatch bg-red-700" data-color="red" title="Red"></div>
+              </div>
+            </div>
+            
+            <!-- 尺码展示（不可选择） -->
+            <div>
+              <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
+              <div class="flex flex-wrap gap-2">
+                <div class="size-option">One Size</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 商品7 - 序号7 -->
+          <div class="group product-card" data-id="7" data-category="accessories">
+            <div class="relative overflow-hidden mb-4">
+              
+              <div class="product-images hidden">
+                <img src="https://picsum.photos/seed/gloves1/600/800" data-color="black" alt="Commuter Gloves - Black">
+                <img src="https://picsum.photos/seed/gloves2/600/800" data-color="brown" alt="Commuter Gloves - Brown">
+              </div>
+              
+              <img src="https://picsum.photos/seed/gloves1/600/800" alt="Commuter Gloves - Black" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
+              
+              <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="hover:text-highlight transition-colors">
+                  <i class="fa fa-heart-o"></i>
+                </button>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+                  Quick View
+                </button>
+              </div>
+            </div>
+            <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Commuter Gloves</h3>
+            <p class="text-primary/70 text-sm mb-2">$45.00</p>
+            
+            <!-- 颜色选择 -->
+            <div class="mb-2">
+              <p class="text-xs text-primary/60 mb-1">Colors:</p>
+              <div class="flex space-x-2">
+                <div class="color-swatch bg-black selected" data-color="black" title="Black"></div>
+                <div class="color-swatch bg-brown-700" data-color="brown" title="Brown"></div>
+              </div>
+            </div>
+            
+            <!-- 尺码展示（不可选择） -->
+            <div>
+              <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
+              <div class="flex flex-wrap gap-2">
+                <div class="size-option">S/M</div>
+                <div class="size-option">L/XL</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 商品8 - 序号8 -->
+          <div class="group product-card" data-id="8" data-category="accessories sale">
+            <div class="relative overflow-hidden mb-4">
+              
+              <div class="product-images hidden">
+                <img src="https://picsum.photos/seed/socks1/600/800" data-color="charcoal" alt="Merino Wool Socks - Charcoal">
+                <img src="https://picsum.photos/seed/socks2/600/800" data-color="navy" alt="Merino Wool Socks - Navy">
+                <img src="https://picsum.photos/seed/socks3/600/800" data-color="olive" alt="Merino Wool Socks - Olive">
+              </div>
+              
+              <img src="https://picsum.photos/seed/socks2/600/800" alt="Merino Wool Socks - Navy" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
+              
+              <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="hover:text-highlight transition-colors">
+                  <i class="fa fa-heart-o"></i>
+                </button>
+              </div>
+              <div class="absolute top-3 left-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full">
+                Sale
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+                  Quick View
+                </button>
+              </div>
+            </div>
+            <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Merino Wool Socks</h3>
+            <p class="text-primary/70 text-sm mb-2 line-through mr-2 inline-block">$32.00</p>
+            <p class="text-highlight text-sm mb-2 inline-block">$24.00</p>
+            
+            <!-- 颜色选择 -->
+            <div class="mb-2">
+              <p class="text-xs text-primary/60 mb-1">Colors:</p>
+              <div class="flex space-x-2">
+                <div class="color-swatch bg-gray-600" data-color="charcoal" title="Charcoal"></div>
+                <div class="color-swatch bg-blue-800 selected" data-color="navy" title="Navy"></div>
+                <div class="color-swatch bg-green-600" data-color="olive" title="Olive"></div>
+              </div>
+            </div>
+            
+            <!-- 尺码展示（不可选择） -->
+            <div>
+              <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
+              <div class="flex flex-wrap gap-2">
+                <div class="size-option">S/M</div>
+                <div class="size-option">L/XL</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 分页 -->
+        <div class="mt-16 flex justify-center">
+          <div class="flex space-x-2">
+            <button class="w-10 h-10 flex items-center justify-center rounded-md border border-accent/30 hover:border-highlight hover:text-highlight transition-colors">
+              <i class="fa fa-chevron-left"></i>
+            </button>
+            <button class="w-10 h-10 flex items-center justify-center rounded-md bg-highlight text-white">1</button>
+            <button class="w-10 h-10 flex items-center justify-center rounded-md border border-accent/30 hover:border-highlight hover:text-highlight transition-colors">2</button>
+            <button class="w-10 h-10 flex items-center justify-center rounded-md border border-accent/30 hover:border-highlight hover:text-highlight transition-colors">3</button>
+            <button class="w-10 h-10 flex items-center justify-center rounded-md border border-accent/30 hover:border-highlight hover:text-highlight transition-colors">
+              <i class="fa fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="py-12 border-t border-accent/30 bg-secondary">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div>
+          <a href="#" class="text-xl font-semibold mb-4 block">Metal Resident</a>
+          <p class="text-primary/70 text-sm leading-relaxed">
+            Stylish and functional clothing for urban cycling and everyday life.
+          </p>
+          <div class="flex space-x-4 mt-6">
+            <a href="#" class="text-primary/70 hover:text-highlight transition-colors">
+              <i class="fa fa-instagram"></i>
+            </a>
+            <a href="#" class="text-primary/70 hover:text-highlight transition-colors">
+              <i class="fa fa-weibo"></i>
+            </a>
+            <a href="#" class="text-primary/70 hover:text-highlight transition-colors">
+              <i class="fa fa-wechat"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-sm uppercase tracking-wider mb-4">Shop</h4>
+          <ul class="space-y-3 text-sm">
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">All Products</a></li>
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">Jackets</a></li>
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">Accessories</a></li>
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">Bags</a></li>
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">Brompton Collection</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-sm uppercase tracking-wider mb-4">Company</h4>
+          <ul class="space-y-3 text-sm">
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">About Us</a></li>
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">Sustainability</a></li>
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">Careers</a></li>
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">Press</a></li>
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-sm uppercase tracking-wider mb-4">Support</h4>
+          <ul class="space-y-3 text-sm">
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">FAQs</a></li>
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">Shipping & Returns</a></li>
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">Size Guide</a></li>
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">Warranty</a></li>
+            <li><a href="#" class="text-primary/70 hover:text-highlight transition-colors">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-accent/30 mt-10 pt-6 text-center text-sm text-primary/50">
+        <p>© The Goldmine Clothing Ltd. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // 导航栏滚动效果
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('bg-white', 'shadow-md');
+      } else {
+        navbar.classList.remove('bg-white', 'shadow-md');
+      }
+    });
+
+    // 移动端菜单切换
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      menuToggle.innerHTML = mobileMenu.classList.contains('hidden') 
+        ? '<i class="fa fa-bars"></i>' 
+        : '<i class="fa fa-times"></i>';
+    });
+
+    // 颜色选择交互 - 单选且切换图片
+    document.querySelectorAll('.color-swatch').forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        // 获取当前商品卡片
+        const productCard = swatch.closest('.group');
+        
+        // 移除同商品中其他颜色的选中状态
+        productCard.querySelectorAll('.color-swatch').forEach(s => {
+          s.classList.remove('selected');
+        });
+        
+        // 添加当前颜色的选中状态
+        swatch.classList.add('selected');
+        
+        // 获取选中的颜色
+        const selectedColor = swatch.getAttribute('data-color');
+        
+        // 查找对应颜色的图片
+        const colorImages = productCard.querySelectorAll('.product-images img');
+        let imageUrl = '';
+        let imageAlt = '';
+        
+        colorImages.forEach(img => {
+          if (img.getAttribute('data-color') === selectedColor) {
+            imageUrl = img.src;
+            imageAlt = img.alt;
+          }
+        });
+        
+        // 切换主显示图片并添加过渡效果
+        const mainImage = productCard.querySelector('.product-main-image');
+        mainImage.style.opacity = '0';
+        
+        setTimeout(() => {
+          mainImage.src = imageUrl;
+          mainImage.alt = imageAlt;
+          mainImage.style.opacity = '1';
+        }, 200);
+      });
+    });
+
+    // 筛选功能实现
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const productCards = document.querySelectorAll('.product-card');
+    const productCount = document.getElementById('product-count');
+    
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // 更新筛选按钮的活跃状态
+        filterButtons.forEach(btn => btn.classList.remove('filter-active', 'text-highlight'));
+        button.classList.add('filter-active', 'text-highlight');
+        
+        const filter = button.getAttribute('data-filter');
+        let visibleCount = 0;
+        
+        // 筛选商品
+        productCards.forEach(card => {
+          if (filter === 'all' || card.getAttribute('data-category').includes(filter)) {
+            card.classList.remove('hidden');
+            visibleCount++;
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+        
+        // 更新商品计数
+        productCount.textContent = `Showing ${visibleCount} products`;
+      });
+    });
+
+    // 按序号排序功能
+    function sortProductsByIndex() {
+      const productsGrid = document.getElementById('products-grid');
+      const cards = Array.from(productCards);
+      
+      // 按data-id排序
+      cards.sort((a, b) => {
+        return parseInt(a.getAttribute('data-id')) - parseInt(b.getAttribute('data-id'));
+      });
+      
+      // 重新排列DOM元素
+      cards.forEach(card => {
+        productsGrid.appendChild(card);
+      });
+    }
+    
+    // 页面加载时按序号排序
+    window.addEventListener('load', sortProductsByIndex);
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          window.scrollTo({
+            top: target.offsetTop - 80,
+            behavior: 'smooth'
+          });
+          
+          // 关闭移动菜单
+          if (!mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+            menuToggle.innerHTML = '<i class="fa fa-bars"></i>';
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+    
