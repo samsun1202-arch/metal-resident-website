@@ -62,6 +62,76 @@
         opacity: 0;
         transform: scale(0.95);
       }
+      /* 图片滑动相关样式 */
+      .image-slider {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        aspect-ratio: 3/4;
+      }
+      .slider-wrapper {
+        display: flex;
+        height: 100%;
+        transition: transform 0.3s ease-in-out;
+      }
+      .slider-image {
+        min-width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+      .slider-nav {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
+      .slider-btn {
+        background-color: rgba(255, 255, 255, 0.8);
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: auto;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .product-card:hover .slider-btn {
+        opacity: 1;
+      }
+      .slider-btn:hover {
+        background-color: white;
+        color: #3b82f6;
+      }
+      .slider-dots {
+        position: absolute;
+        bottom: 8px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+      }
+      .slider-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .slider-dot.active {
+        background-color: white;
+        transform: scale(1.2);
+      }
     }
   </style>
   <!-- 引入字体 -->
@@ -89,7 +159,7 @@
         </nav>
         
         <!-- 导航工具 -->
-        <div class="flex items-center space-x-6">
+        <!-- <div class="flex items-center space-x-6">
           <a href="#" class="hover:text-highlight transition-colors">
             <i class="fa fa-search text-lg"></i>
           </a>
@@ -99,7 +169,7 @@
           <a href="#" class="hover:text-highlight transition-colors relative">
             <i class="fa fa-shopping-bag text-lg"></i>
             <span class="absolute -top-2 -right-2 bg-highlight text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">3</span>
-          </a>
+          </a> -->
           
           <!-- 移动端菜单按钮 -->
           <button class="md:hidden text-xl" id="menu-toggle">
@@ -139,8 +209,6 @@
             <button class="whitespace-nowrap text-primary/70 hover:text-primary transition-colors pb-1 filter-btn" data-filter="clothes">Clothes</button>
             <button class="whitespace-nowrap text-primary/70 hover:text-primary transition-colors pb-1 filter-btn" data-filter="accessories">Accessories</button>
             <button class="whitespace-nowrap text-primary/70 hover:text-primary transition-colors pb-1 filter-btn" data-filter="brompton">Brompton Collection</button>
-            <button class="whitespace-nowrap text-primary/70 hover:text-primary transition-colors pb-1 filter-btn" data-filter="new">New Arrivals</button>
-            <button class="whitespace-nowrap text-primary/70 hover:text-primary transition-colors pb-1 filter-btn" data-filter="sale">On Sale</button>
           </div>
         </div>
       </div>
@@ -154,15 +222,33 @@
           <div class="group product-card" data-id="1" data-category="clothes">
             <div class="relative overflow-hidden mb-4">
               
-              <!-- 存储不同颜色的图片路径数据 -->
-              <div class="product-images hidden">
-                <img src="https://picsum.photos/seed/jacket1/600/800" data-color="black" alt="Urban Cycling Jacket - Black">
-                <img src="https://picsum.photos/seed/jacket2/600/800" data-color="gray" alt="Urban Cycling Jacket - Gray">
-                <img src="https://picsum.photos/seed/jacket3/600/800" data-color="navy" alt="Urban Cycling Jacket - Navy">
+              <!-- 图片滑动组件 -->
+              <div class="image-slider">
+                <div class="slider-wrapper">
+                  <img src="https://github.com/samsun1202-arch/metal-resident-website/blob/main/waffle01.jpg?raw=true" class="slider-image" alt="wallfe01">
+                 <!--  <img src="https://picsum.photos/seed/jacket1b/600/800" class="slider-image" alt="Urban Cycling Jacket - Side View">
+                  <img src="https://picsum.photos/seed/jacket1c/600/800" class="slider-image" alt="Urban Cycling Jacket - Back View">
+                  <img src="https://picsum.photos/seed/jacket1d/600/800" class="slider-image" alt="Urban Cycling Jacket - Detail View"> -->
+                </div>
+                
+                <!-- 导航按钮 -->
+                <div class="slider-nav">
+                  <button class="slider-btn prev-btn">
+                    <i class="fa fa-chevron-left"></i>
+                  </button>
+                  <button class="slider-btn next-btn">
+                    <i class="fa fa-chevron-right"></i>
+                  </button>
+                </div>
+                
+                <!-- 指示器 -->
+                <div class="slider-dots">
+                  <div class="slider-dot active" data-index="0"></div>
+                  <div class="slider-dot" data-index="1"></div>
+                  <div class="slider-dot" data-index="2"></div>
+                  <div class="slider-dot" data-index="3"></div>
+                </div>
               </div>
-              
-              <!-- 主显示图片 -->
-              <img src="https://picsum.photos/seed/jacket1/600/800" alt="Urban Cycling Jacket - Black" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
               
               <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                 <button class="hover:text-highlight transition-colors">
@@ -170,15 +256,15 @@
                 </button>
               </div>
               <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+               <!-- <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
                   Quick View
-                </button>
+                </button>-->
               </div>
             </div>
             <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Urban Cycling Jacket</h3>
             <p class="text-primary/70 text-sm mb-2">$189.00</p>
             
-            <!-- 颜色选择 -->
+            <!-- 颜色选择 --
             <div class="mb-2">
               <p class="text-xs text-primary/60 mb-1">Colors:</p>
               <div class="flex space-x-2">
@@ -188,7 +274,7 @@
               </div>
             </div>
             
-            <!-- 尺码展示（不可选择） -->
+            <!-- 尺码展示 --
             <div>
               <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
               <div class="flex flex-wrap gap-2">
@@ -202,34 +288,50 @@
           </div>
           
           <!-- 商品2 - 序号2 -->
-          <div class="group product-card" data-id="2" data-category="accessories new">
+          <div class="group product-card" data-id="2" data-category="clothes">
             <div class="relative overflow-hidden mb-4">
               
-              <div class="product-images hidden">
-                <img src="https://picsum.photos/seed/bag1/600/800" data-color="black" alt="Commuter Backpack - Black">
-                <img src="https://picsum.photos/seed/bag2/600/800" data-color="olive" alt="Commuter Backpack - Olive">
+              <!-- 图片滑动组件 -->
+              <div class="image-slider">
+                <div class="slider-wrapper">
+                  <img src="https://github.com/samsun1202-arch/metal-resident-website/blob/main/wax-tee03.jpg?raw=true" class="slider-image" alt="wax-tee03">
+                 <!--  <img src="https://picsum.photos/seed/bag1b/600/800" class="slider-image" alt="Commuter Backpack - Side View">
+                  <img src="https://picsum.photos/seed/bag1c/600/800" class="slider-image" alt="Commuter Backpack - Open View">-->
+                </div>
+                
+                <!-- 导航按钮 -->
+                <div class="slider-nav">
+                  <button class="slider-btn prev-btn">
+                    <i class="fa fa-chevron-left"></i>
+                  </button>
+                  <button class="slider-btn next-btn">
+                    <i class="fa fa-chevron-right"></i>
+                  </button>
+                </div>
+                
+                <!-- 指示器 -->
+                <div class="slider-dots">
+                  <div class="slider-dot active" data-index="0"></div>
+                  <div class="slider-dot" data-index="1"></div>
+                  <div class="slider-dot" data-index="2"></div>
+                </div>
               </div>
-              
-              <img src="https://picsum.photos/seed/bag1/600/800" alt="Commuter Backpack - Black" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
               
               <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                 <button class="hover:text-highlight transition-colors">
                   <i class="fa fa-heart-o"></i>
                 </button>
               </div>
-              <div class="absolute top-3 left-3 bg-highlight text-white text-xs px-3 py-1 rounded-full">
-                New
-              </div>
               <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+                <!-- <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
                   Quick View
-                </button>
+                </button>-->
               </div>
             </div>
             <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Commuter Backpack</h3>
             <p class="text-primary/70 text-sm mb-2">$129.00</p>
             
-            <!-- 颜色选择 -->
+            <!-- 颜色选择 --
             <div class="mb-2">
               <p class="text-xs text-primary/60 mb-1">Colors:</p>
               <div class="flex space-x-2">
@@ -238,7 +340,7 @@
               </div>
             </div>
             
-            <!-- 尺码展示（不可选择） -->
+            <!-- 尺码展示 --
             <div>
               <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
               <div class="flex flex-wrap gap-2">
@@ -251,13 +353,31 @@
           <div class="group product-card" data-id="3" data-category="clothes">
             <div class="relative overflow-hidden mb-4">
               
-              <div class="product-images hidden">
-                <img src="https://picsum.photos/seed/shirt1/600/800" data-color="blue" alt="Technical Cycling Shirt - Blue">
-                <img src="https://picsum.photos/seed/shirt2/600/800" data-color="light-gray" alt="Technical Cycling Shirt - Light Gray">
-                <img src="https://picsum.photos/seed/shirt3/600/800" data-color="forest" alt="Technical Cycling Shirt - Forest Green">
+              <!-- 图片滑动组件 -->
+              <div class="image-slider">
+                <div class="slider-wrapper">
+                  <img src="https://github.com/samsun1202-arch/metal-resident-website/blob/main/hoodie1-01.jpg?raw=true" class="slider-image" alt="hoodie1-01">
+                 <!--  <img src="https://picsum.photos/seed/shirt3b/600/800" class="slider-image" alt="Technical Cycling Shirt - Side View">
+                  <img src="https://picsum.photos/seed/shirt3c/600/800" class="slider-image" alt="Technical Cycling Shirt - Back View">-->
+                </div>
+                
+                <!-- 导航按钮 -->
+                <div class="slider-nav">
+                  <button class="slider-btn prev-btn">
+                    <i class="fa fa-chevron-left"></i>
+                  </button>
+                  <button class="slider-btn next-btn">
+                    <i class="fa fa-chevron-right"></i>
+                  </button>
+                </div>
+                
+                <!-- 指示器 -->
+                <div class="slider-dots">
+                  <div class="slider-dot active" data-index="0"></div>
+                  <div class="slider-dot" data-index="1"></div>
+                  <div class="slider-dot" data-index="2"></div>
+                </div>
               </div>
-              
-              <img src="https://picsum.photos/seed/shirt3/600/800" alt="Technical Cycling Shirt - Forest Green" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
               
               <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                 <button class="hover:text-highlight transition-colors">
@@ -265,15 +385,15 @@
                 </button>
               </div>
               <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+                <!-- <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
                   Quick View
-                </button>
+                </button>-->
               </div>
             </div>
             <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Technical Cycling Shirt</h3>
             <p class="text-primary/70 text-sm mb-2">$89.00</p>
             
-            <!-- 颜色选择 -->
+            <!-- 颜色选择 --
             <div class="mb-2">
               <p class="text-xs text-primary/60 mb-1">Colors:</p>
               <div class="flex space-x-2">
@@ -283,7 +403,7 @@
               </div>
             </div>
             
-            <!-- 尺码展示（不可选择） -->
+            <!-- 尺码展示 --
             <div>
               <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
               <div class="flex flex-wrap gap-2">
@@ -297,15 +417,34 @@
           </div>
           
           <!-- 商品4 - 序号4 -->
-          <div class="group product-card" data-id="4" data-category="clothes">
+          <div class="group product-card" data-id="4" data-category="accessories">
             <div class="relative overflow-hidden mb-4">
               
-              <div class="product-images hidden">
-                <img src="https://picsum.photos/seed/pants1/600/800" data-color="black" alt="Urban Cycling Pants - Black">
-                <img src="https://picsum.photos/seed/pants2/600/800" data-color="dark-gray" alt="Urban Cycling Pants - Dark Gray">
+              <!-- 图片滑动组件 -->
+              <div class="image-slider">
+                <div class="slider-wrapper">
+                  <img src="https://github.com/samsun1202-arch/metal-resident-website/blob/main/cap1-01.jpg?raw=true" class="slider-image" alt="cap1-01">
+                 <!--  <img src="https://picsum.photos/seed/pants1b/600/800" class="slider-image" alt="Urban Cycling Pants - Side View">
+                  <img src="https://picsum.photos/seed/pants1c/600/800" class="slider-image" alt="Urban Cycling Pants - Back View">-->
+                </div>
+                
+                <!-- 导航按钮 -->
+                <div class="slider-nav">
+                  <button class="slider-btn prev-btn">
+                    <i class="fa fa-chevron-left"></i>
+                  </button>
+                  <button class="slider-btn next-btn">
+                    <i class="fa fa-chevron-right"></i>
+                  </button>
+                </div>
+                
+                <!-- 指示器 -->
+                <div class="slider-dots">
+                  <div class="slider-dot active" data-index="0"></div>
+                  <div class="slider-dot" data-index="1"></div>
+                  <div class="slider-dot" data-index="2"></div>
+                </div>
               </div>
-              
-              <img src="https://picsum.photos/seed/pants1/600/800" alt="Urban Cycling Pants - Black" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
               
               <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                 <button class="hover:text-highlight transition-colors">
@@ -313,15 +452,15 @@
                 </button>
               </div>
               <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+               <!--  <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
                   Quick View
-                </button>
+                </button>-->
               </div>
             </div>
             <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Urban Cycling Pants</h3>
             <p class="text-primary/70 text-sm mb-2">$119.00</p>
             
-            <!-- 颜色选择 -->
+            <!-- 颜色选择 --
             <div class="mb-2">
               <p class="text-xs text-primary/60 mb-1">Colors:</p>
               <div class="flex space-x-2">
@@ -330,7 +469,7 @@
               </div>
             </div>
             
-            <!-- 尺码展示（不可选择） -->
+            <!-- 尺码展示 --
             <div>
               <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
               <div class="flex flex-wrap gap-2">
@@ -343,35 +482,53 @@
           </div>
           
           <!-- 商品5 - 序号5 -->
-          <div class="group product-card" data-id="5" data-category="accessories brompton limited">
+          <div class="group product-card" data-id="5" data-category="accessories">
             <div class="relative overflow-hidden mb-4">
               
-              <div class="product-images hidden">
-                <img src="https://picsum.photos/seed/brompton1/600/800" data-color="red" alt="Brompton Handlebar Bag - Red">
-                <img src="https://picsum.photos/seed/brompton2/600/800" data-color="black" alt="Brompton Handlebar Bag - Black">
-                <img src="https://picsum.photos/seed/brompton3/600/800" data-color="yellow" alt="Brompton Handlebar Bag - Yellow">
+              <!-- 图片滑动组件 -->
+              <div class="image-slider">
+                <div class="slider-wrapper">
+                  <img src="https://github.com/samsun1202-arch/metal-resident-website/blob/main/cap2-01.JPG?raw=true" class="slider-image" alt="cap2-01">
+                  <!-- <img src="https://picsum.photos/seed/brompton2b/600/800" class="slider-image" alt="Brompton Handlebar Bag - Side View">
+                  <img src="https://picsum.photos/seed/brompton2c/600/800" class="slider-image" alt="Brompton Handlebar Bag - Mounted View">-->
+                </div>
+                
+                <!-- 导航按钮 -->
+                <div class="slider-nav">
+                  <button class="slider-btn prev-btn">
+                    <i class="fa fa-chevron-left"></i>
+                  </button>
+                  <button class="slider-btn next-btn">
+                    <i class="fa fa-chevron-right"></i>
+                  </button>
+                </div>
+                
+                <!-- 指示器 -->
+                <div class="slider-dots">
+                  <div class="slider-dot active" data-index="0"></div>
+                  <div class="slider-dot" data-index="1"></div>
+                  <div class="slider-dot" data-index="2"></div>
+                </div>
               </div>
-              
-              <img src="https://picsum.photos/seed/brompton2/600/800" alt="Brompton Handlebar Bag - Black" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
               
               <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                 <button class="hover:text-highlight transition-colors">
                   <i class="fa fa-heart-o"></i>
                 </button>
               </div>
-              <div class="absolute top-3 left-3 bg-highlight text-white text-xs px-3 py-1 rounded-full">
+              <!--<div class="absolute top-3 left-3 bg-highlight text-white text-xs px-3 py-1 rounded-full">
                 Limited
-              </div>
+              </div>-->
               <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+               <!--  <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
                   Quick View
-                </button>
+                </button>-->
               </div>
             </div>
             <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Brompton Handlebar Bag</h3>
             <p class="text-primary/70 text-sm mb-2">$159.00</p>
             
-            <!-- 颜色选择 -->
+            <!-- 颜色选择 --
             <div class="mb-2">
               <p class="text-xs text-primary/60 mb-1">Colors:</p>
               <div class="flex space-x-2">
@@ -381,7 +538,7 @@
               </div>
             </div>
             
-            <!-- 尺码展示（不可选择） -->
+            <!-- 尺码展示 --
             <div>
               <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
               <div class="flex flex-wrap gap-2">
@@ -391,36 +548,50 @@
           </div>
           
           <!-- 商品6 - 序号6 -->
-          <div class="group product-card" data-id="6" data-category="accessories new">
+          <div class="group product-card" data-id="6" data-category="brompton">
             <div class="relative overflow-hidden mb-4">
               
-              <div class="product-images hidden">
-                <img src="https://picsum.photos/seed/cap1/600/800" data-color="navy" alt="Cycling Cap - Navy">
-                <img src="https://picsum.photos/seed/cap2/600/800" data-color="green" alt="Cycling Cap - Green">
-                <img src="https://picsum.photos/seed/cap3/600/800" data-color="off-white" alt="Cycling Cap - Off White">
-                <img src="https://picsum.photos/seed/cap4/600/800" data-color="red" alt="Cycling Cap - Red">
+              <!-- 图片滑动组件 -->
+              <div class="image-slider">
+                <div class="slider-wrapper">
+                  <img src="https://github.com/samsun1202-arch/metal-resident-website/blob/main/20L-BLK.jpg?raw=true" class="slider-image" alt="20L-BLK">
+                  <!-- <img src="https://picsum.photos/seed/cap2b/600/800" class="slider-image" alt="Cycling Cap - Side View">
+                  <img src="https://picsum.photos/seed/cap2c/600/800" class="slider-image" alt="Cycling Cap - Back View">-->
+                </div>
+                
+                <!-- 导航按钮 -->
+                <div class="slider-nav">
+                  <button class="slider-btn prev-btn">
+                    <i class="fa fa-chevron-left"></i>
+                  </button>
+                  <button class="slider-btn next-btn">
+                    <i class="fa fa-chevron-right"></i>
+                  </button>
+                </div>
+                
+                <!-- 指示器 -->
+                <div class="slider-dots">
+                  <div class="slider-dot active" data-index="0"></div>
+                  <div class="slider-dot" data-index="1"></div>
+                  <div class="slider-dot" data-index="2"></div>
+                </div>
               </div>
-              
-              <img src="https://picsum.photos/seed/cap2/600/800" alt="Cycling Cap - Green" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
               
               <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                 <button class="hover:text-highlight transition-colors">
                   <i class="fa fa-heart-o"></i>
                 </button>
               </div>
-              <div class="absolute top-3 left-3 bg-highlight text-white text-xs px-3 py-1 rounded-full">
-                New
-              </div>
               <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+                <!-- <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
                   Quick View
-                </button>
+                </button>-->
               </div>
             </div>
             <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Cycling Cap</h3>
             <p class="text-primary/70 text-sm mb-2">$35.00</p>
             
-            <!-- 颜色选择 -->
+            <!-- 颜色选择 --
             <div class="mb-2">
               <p class="text-xs text-primary/60 mb-1">Colors:</p>
               <div class="flex space-x-2">
@@ -431,7 +602,7 @@
               </div>
             </div>
             
-            <!-- 尺码展示（不可选择） -->
+            <!-- 尺码展示 --
             <div>
               <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
               <div class="flex flex-wrap gap-2">
@@ -441,15 +612,34 @@
           </div>
           
           <!-- 商品7 - 序号7 -->
-          <div class="group product-card" data-id="7" data-category="accessories">
+          <div class="group product-card" data-id="7" data-category="brompton">
             <div class="relative overflow-hidden mb-4">
               
-              <div class="product-images hidden">
-                <img src="https://picsum.photos/seed/gloves1/600/800" data-color="black" alt="Commuter Gloves - Black">
-                <img src="https://picsum.photos/seed/gloves2/600/800" data-color="brown" alt="Commuter Gloves - Brown">
+              <!-- 图片滑动组件 -->
+              <div class="image-slider">
+                <div class="slider-wrapper">
+                  <img src="https://github.com/samsun1202-arch/metal-resident-website/blob/main/10L-PUR.jpg?raw=true" class="slider-image" alt="10L-PUR">
+                 <!--  <img src="https://picsum.photos/seed/gloves1b/600/800" class="slider-image" alt="Commuter Gloves - Side View">
+                  <img src="https://picsum.photos/seed/gloves1c/600/800" class="slider-image" alt="Commuter Gloves - Detail View">-->
+                </div>
+                
+                <!-- 导航按钮 -->
+                <div class="slider-nav">
+                  <button class="slider-btn prev-btn">
+                    <i class="fa fa-chevron-left"></i>
+                  </button>
+                  <button class="slider-btn next-btn">
+                    <i class="fa fa-chevron-right"></i>
+                  </button>
+                </div>
+                
+                <!-- 指示器 -->
+                <div class="slider-dots">
+                  <div class="slider-dot active" data-index="0"></div>
+                  <div class="slider-dot" data-index="1"></div>
+                  <div class="slider-dot" data-index="2"></div>
+                </div>
               </div>
-              
-              <img src="https://picsum.photos/seed/gloves1/600/800" alt="Commuter Gloves - Black" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
               
               <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                 <button class="hover:text-highlight transition-colors">
@@ -457,15 +647,15 @@
                 </button>
               </div>
               <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+                <!-- <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
                   Quick View
-                </button>
+                </button>-->
               </div>
             </div>
             <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Commuter Gloves</h3>
             <p class="text-primary/70 text-sm mb-2">$45.00</p>
             
-            <!-- 颜色选择 -->
+            <!-- 颜色选择 --
             <div class="mb-2">
               <p class="text-xs text-primary/60 mb-1">Colors:</p>
               <div class="flex space-x-2">
@@ -474,7 +664,7 @@
               </div>
             </div>
             
-            <!-- 尺码展示（不可选择） -->
+            <!-- 尺码展示 --
             <div>
               <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
               <div class="flex flex-wrap gap-2">
@@ -485,36 +675,54 @@
           </div>
           
           <!-- 商品8 - 序号8 -->
-          <div class="group product-card" data-id="8" data-category="accessories sale">
+          <div class="group product-card" data-id="8" data-category="brompton">
             <div class="relative overflow-hidden mb-4">
               
-              <div class="product-images hidden">
-                <img src="https://picsum.photos/seed/socks1/600/800" data-color="charcoal" alt="Merino Wool Socks - Charcoal">
-                <img src="https://picsum.photos/seed/socks2/600/800" data-color="navy" alt="Merino Wool Socks - Navy">
-                <img src="https://picsum.photos/seed/socks3/600/800" data-color="olive" alt="Merino Wool Socks - Olive">
+              <!-- 图片滑动组件 -->
+              <div class="image-slider">
+                <div class="slider-wrapper">
+                  <img src="https://github.com/samsun1202-arch/metal-resident-website/blob/main/5L-YLW.jpg?raw=true" class="slider-image" alt="5L-YLW">
+                 <!--  <img src="https://picsum.photos/seed/socks2b/600/800" class="slider-image" alt="Merino Wool Socks - Detail View">
+                  <img src="https://picsum.photos/seed/socks2c/600/800" class="slider-image" alt="Merino Wool Socks - Pack View">-->
+                </div>
+                
+                <!-- 导航按钮 -->
+                <div class="slider-nav">
+                  <button class="slider-btn prev-btn">
+                    <i class="fa fa-chevron-left"></i>
+                  </button>
+                  <button class="slider-btn next-btn">
+                    <i class="fa fa-chevron-right"></i>
+                  </button>
+                </div>
+                
+                <!-- 指示器 -->
+                <div class="slider-dots">
+                  <div class="slider-dot active" data-index="0"></div>
+                  <div class="slider-dot" data-index="1"></div>
+                  <div class="slider-dot" data-index="2"></div>
+                </div>
               </div>
-              
-              <img src="https://picsum.photos/seed/socks2/600/800" alt="Merino Wool Socks - Navy" class="product-main-image w-full aspect-[3/4] object-cover object-center transition-transform duration-500 group-hover:scale-105">
               
               <div class="absolute top-3 right-3 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                 <button class="hover:text-highlight transition-colors">
                   <i class="fa fa-heart-o"></i>
                 </button>
               </div>
-              <div class="absolute top-3 left-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full">
+              <!-- <div class="absolute top-3 left-3 bg-red-500 text-white text-xs px-3 py-1 rounded-full">
                 Sale
-              </div>
+              </div>-->
               <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
+               <!--  <button class="w-full bg-white text-primary py-2 text-sm uppercase tracking-wider hover:bg-highlight hover:text-white transition-colors">
                   Quick View
-                </button>
+                </button>-->
               </div>
             </div>
             <h3 class="text-lg font-medium mb-1 group-hover:text-highlight transition-colors">Merino Wool Socks</h3>
-            <p class="text-primary/70 text-sm mb-2 line-through mr-2 inline-block">$32.00</p>
-            <p class="text-highlight text-sm mb-2 inline-block">$24.00</p>
+            <p class="text-primary/70 text-sm mb-2 mr-2 inline-block">$32.00</p>
+           <!--  <p class="text-highlight text-sm mb-2 inline-block">$24.00</p>     line-through   是在文字上划线-->
             
-            <!-- 颜色选择 -->
+            <!-- 颜色选择
             <div class="mb-2">
               <p class="text-xs text-primary/60 mb-1">Colors:</p>
               <div class="flex space-x-2">
@@ -524,29 +732,16 @@
               </div>
             </div>
             
-            <!-- 尺码展示（不可选择） -->
+            <!-- 尺码展示
             <div>
               <p class="text-xs text-primary/60 mb-1">Available Sizes:</p>
               <div class="flex flex-wrap gap-2">
                 <div class="size-option">S/M</div>
                 <div class="size-option">L/XL</div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
-        
-        <!-- 分页 -->
-        <div class="mt-16 flex justify-center">
-          <div class="flex space-x-2">
-            <button class="w-10 h-10 flex items-center justify-center rounded-md border border-accent/30 hover:border-highlight hover:text-highlight transition-colors">
-              <i class="fa fa-chevron-left"></i>
-            </button>
-            <button class="w-10 h-10 flex items-center justify-center rounded-md bg-highlight text-white">1</button>
-            <button class="w-10 h-10 flex items-center justify-center rounded-md border border-accent/30 hover:border-highlight hover:text-highlight transition-colors">2</button>
-            <button class="w-10 h-10 flex items-center justify-center rounded-md border border-accent/30 hover:border-highlight hover:text-highlight transition-colors">3</button>
-            <button class="w-10 h-10 flex items-center justify-center rounded-md border border-accent/30 hover:border-highlight hover:text-highlight transition-colors">
-              <i class="fa fa-chevron-right"></i>
-            </button>
           </div>
         </div>
       </div>
@@ -654,27 +849,9 @@
         // 获取选中的颜色
         const selectedColor = swatch.getAttribute('data-color');
         
-        // 查找对应颜色的图片
-        const colorImages = productCard.querySelectorAll('.product-images img');
-        let imageUrl = '';
-        let imageAlt = '';
-        
-        colorImages.forEach(img => {
-          if (img.getAttribute('data-color') === selectedColor) {
-            imageUrl = img.src;
-            imageAlt = img.alt;
-          }
-        });
-        
-        // 切换主显示图片并添加过渡效果
-        const mainImage = productCard.querySelector('.product-main-image');
-        mainImage.style.opacity = '0';
-        
-        setTimeout(() => {
-          mainImage.src = imageUrl;
-          mainImage.alt = imageAlt;
-          mainImage.style.opacity = '1';
-        }, 200);
+        // 重置轮播到第一张图
+        const slider = productCard.querySelector('.image-slider');
+        resetSlider(slider, 0);
       });
     });
 
@@ -723,8 +900,98 @@
       });
     }
     
-    // 页面加载时按序号排序
-    window.addEventListener('load', sortProductsByIndex);
+    // 图片滑动功能实现
+    function initSliders() {
+      // 为每个滑块初始化
+      document.querySelectorAll('.image-slider').forEach(slider => {
+        const wrapper = slider.querySelector('.slider-wrapper');
+        const images = slider.querySelectorAll('.slider-image');
+        const dots = slider.querySelectorAll('.slider-dot');
+        const prevBtn = slider.querySelector('.prev-btn');
+        const nextBtn = slider.querySelector('.next-btn');
+        let currentIndex = 0;
+        const totalImages = images.length;
+        
+        // 更新滑块位置
+        function updateSliderPosition() {
+          wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+          
+          // 更新指示器
+          dots.forEach((dot, index) => {
+            if (index === currentIndex) {
+              dot.classList.add('active');
+            } else {
+              dot.classList.remove('active');
+            }
+          });
+        }
+        
+        // 下一张图片
+        nextBtn.addEventListener('click', () => {
+          currentIndex = (currentIndex + 1) % totalImages;
+          updateSliderPosition();
+        });
+        
+        // 上一张图片
+        prevBtn.addEventListener('click', () => {
+          currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+          updateSliderPosition();
+        });
+        
+        // 点击指示器切换图片
+        dots.forEach(dot => {
+          dot.addEventListener('click', () => {
+            currentIndex = parseInt(dot.getAttribute('data-index'));
+            updateSliderPosition();
+          });
+        });
+        
+        // 添加触摸滑动支持
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        slider.addEventListener('touchstart', (e) => {
+          touchStartX = e.changedTouches[0].screenX;
+        }, false);
+        
+        slider.addEventListener('touchend', (e) => {
+          touchEndX = e.changedTouches[0].screenX;
+          handleSwipe();
+        }, false);
+        
+        function handleSwipe() {
+          const swipeThreshold = 50;
+          if (touchEndX - touchStartX > swipeThreshold) {
+            // 向左滑动
+            currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+            updateSliderPosition();
+          } else if (touchEndX - touchStartX < -swipeThreshold) {
+            // 向右滑动
+            currentIndex = (currentIndex + 1) % totalImages;
+            updateSliderPosition();
+          }
+        }
+        
+        // 公开重置方法
+        slider.resetSlider = function(index) {
+          currentIndex = index;
+          updateSliderPosition();
+        };
+      });
+    }
+    
+    // 重置滑块到指定索引
+    function resetSlider(slider, index) {
+      if (slider.resetSlider) {
+        slider.resetSlider(index);
+      }
+    }
+    
+    // 页面加载时初始化
+    window.addEventListener('load', () => {
+      sortProductsByIndex();
+      initSliders();
+    });
 
     // 平滑滚动
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -748,4 +1015,3 @@
   </script>
 </body>
 </html>
-    
