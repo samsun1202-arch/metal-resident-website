@@ -40,29 +40,37 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
 </head>
 <body class="font-inter bg-light text-primary antialiased">
-  <!-- Header/Navigation -->
+ <!-- 导航栏 -->
   <header class="fixed w-full top-0 z-50 transition-all duration-300" id="navbar">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center py-6">
-        <a href="#" class="text-2xl font-semibold tracking-tight">Metal Resident</a>
+        <!-- 品牌Logo -->
+              <div class="logo">
+              <!-- 品牌logo地址 -->
+              <img src="https://github.com/samsun1202-arch/metal-resident-website/blob/main/MR-Logo.jpg?raw=true" alt="Logo" class="w-30 h-10 object-cover object-center transition-transform duration-500 group-hover:scale-15">
+              </div>
+        <!-- 桌面端导航 -->
         <nav class="hidden md:flex space-x-8">
-          <a href="#work" class="text-sm uppercase tracking-widest hover:text-primary/70 transition-colors">PRODUCTS</a>
-          <a href="#about" class="text-sm uppercase tracking-widest hover:text-primary/70 transition-colors">ABOUT</a>
-          <a href="#services" class="text-sm uppercase tracking-widest hover:text-primary/70 transition-colors">DISTRIBUTORS</a>
-          <a href="#contact" class="text-sm uppercase tracking-widest hover:text-primary/70 transition-colors">CONTACT</a>
+          <a href="#products" class="text-sm uppercase tracking-widest hover:text-highlight transition-colors">Products</a>
+          <a href="#about" class="text-sm uppercase tracking-widest hover:text-highlight transition-colors">About</a>
+          <a href="#distributors" class="text-sm uppercase tracking-widest hover:text-highlight transition-colors">Distributors</a>
+          <a href="#contact" class="text-sm uppercase tracking-widest hover:text-highlight transition-colors">Contact</a>
         </nav>
+        
+        <!-- 移动端菜单按钮 -->
         <button class="md:hidden text-xl" id="menu-toggle">
           <i class="fa fa-bars"></i>
         </button>
       </div>
     </div>
-    <!-- Mobile Menu -->
-    <div class="md:hidden hidden bg-light border-t border-accent/30" id="mobile-menu">
+    
+    <!-- 移动端菜单 -->
+    <div class="md:hidden hidden bg-white border-t border-accent/30" id="mobile-menu">
       <div class="container mx-auto px-4 py-4 space-y-4">
-        <a href="#work" class="block text-sm uppercase tracking-widest hover:text-primary/70 transition-colors">Work</a>
-        <a href="#about" class="block text-sm uppercase tracking-widest hover:text-primary/70 transition-colors">About</a>
-        <a href="#services" class="block text-sm uppercase tracking-widest hover:text-primary/70 transition-colors">Services</a>
-        <a href="#contact" class="block text-sm uppercase tracking-widest hover:text-primary/70 transition-colors">Contact</a>
+        <a href="#products" class="block text-sm uppercase tracking-widest hover:text-highlight transition-colors">Products</a>
+        <a href="#about" class="block text-sm uppercase tracking-widest hover:text-highlight transition-colors">About</a>
+        <a href="#distributors" class="block text-sm uppercase tracking-widest hover:text-highlight transition-colors">Distributors</a>
+        <a href="#contact" class="block text-sm uppercase tracking-widest hover:text-highlight transition-colors">Contact</a>
       </div>
     </div>
   </header>
